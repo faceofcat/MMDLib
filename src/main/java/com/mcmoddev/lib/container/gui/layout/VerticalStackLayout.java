@@ -9,6 +9,7 @@ import com.mcmoddev.lib.container.gui.util.Size2D;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+// TODO: add content alignment
 @SideOnly(Side.CLIENT)
 public class VerticalStackLayout extends BaseLayout implements IWidgetLayoutDebugInfo {
     private final List<IWidgetGui> pieces = Lists.newArrayList();
