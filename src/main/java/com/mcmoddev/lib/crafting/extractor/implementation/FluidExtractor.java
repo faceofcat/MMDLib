@@ -6,7 +6,6 @@ import com.mcmoddev.lib.crafting.ingredient.ICraftingIngredient;
 import com.mcmoddev.lib.crafting.ingredient.IngredientUtils;
 import com.mcmoddev.lib.crafting.input.ICraftingFluidInput;
 import com.mcmoddev.lib.crafting.input.ICraftingInput;
-import com.mcmoddev.lib.crafting.input.ICraftingItemInput;
 import com.mcmoddev.lib.crafting.inventory.ICraftingInventory;
 import com.mcmoddev.lib.crafting.inventory.IFluidInventory;
 import com.mcmoddev.lib.crafting.inventory.IItemInventory;
@@ -27,7 +26,7 @@ public class FluidExtractor extends BaseCraftingExtractor {
     @Nullable
     @Override
     public ICraftingIngredient extract(ICraftingInput input, ICraftingInventory inventory, boolean simulate) {
-        ICraftingFluidInput fluidInput = (input instanceof ICraftingItemInput) ? (ICraftingFluidInput)input : null;
+        ICraftingFluidInput fluidInput = (input instanceof ICraftingFluidInput) ? (ICraftingFluidInput)input : null;
         if (fluidInput != null) {
             Stream<FluidStack> expected = fluidInput.getPossibleInputs().stream();
             int extracted = 0;

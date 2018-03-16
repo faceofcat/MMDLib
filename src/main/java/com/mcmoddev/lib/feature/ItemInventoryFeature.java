@@ -1,6 +1,7 @@
 package com.mcmoddev.lib.feature;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiPredicate;
 import javax.annotation.Nonnull;
@@ -12,6 +13,10 @@ import com.mcmoddev.lib.container.gui.IWidgetGui;
 import com.mcmoddev.lib.container.gui.InventoryGrid;
 import com.mcmoddev.lib.container.widget.IWidget;
 import com.mcmoddev.lib.container.widget.ItemStackHandlerWidget;
+import com.mcmoddev.lib.crafting.inventory.ICraftingInventory;
+import com.mcmoddev.lib.crafting.inventory.ICraftingInventoryProvider;
+import com.mcmoddev.lib.crafting.inventory.IItemInventory;
+import com.mcmoddev.lib.crafting.inventory.implementation.ItemHandlerCraftingInventory;
 import com.mcmoddev.lib.inventory.FilteredItemHandler;
 import com.mcmoddev.lib.inventory.ItemHandlerWrapper;
 import net.minecraft.item.ItemStack;
@@ -26,7 +31,10 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 @SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue"})
-public class ItemInventoryFeature extends BaseFeature implements IClientFeature, IWidgetContainer, ICapabilityProvider {
+public class ItemInventoryFeature
+    extends BaseFeature
+    implements IClientFeature, IWidgetContainer, ICapabilityProvider, ICraftingInventoryProvider {
+
     private final IItemHandlerModifiable internalHandler;
     private final FilteredItemHandler externalHandler;
 
@@ -183,5 +191,11 @@ public class ItemInventoryFeature extends BaseFeature implements IClientFeature,
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(this.getExternalHandler());
         }
         return null;
+    }
+
+    @Override
+    public List<ICraftingInventory> getInventories() {
+        IItemInventory items = new ItemHandlerCraftingInventory(this.getKey(), this.internalHandler);
+        return Collections.singletonList(items);
     }
 }
