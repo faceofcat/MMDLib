@@ -2,21 +2,32 @@ package com.mcmoddev.lib.crafting.extractor.implementation;
 
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
-import com.mcmoddev.lib.crafting.ingredient.ICraftingIngredient;
-import com.mcmoddev.lib.crafting.ingredient.IngredientUtils;
-import com.mcmoddev.lib.crafting.input.ICraftingInput;
-import com.mcmoddev.lib.crafting.input.ICraftingItemInput;
 import com.mcmoddev.lib.crafting.inventory.ICraftingInventory;
-import com.mcmoddev.lib.crafting.inventory.IItemInventory;
+import com.mcmoddev.lib.crafting.recipe.RecipeRunningContext;
 import com.mcmoddev.lib.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemHandlerHelper;
+import ICraftingIngredient;
+import ICraftingInput;
+import ICraftingItemInput;
+import IItemInventory;
+import IngredientUtils;
 
 public class ItemExtractor extends BaseCraftingExtractor {
     public static final ItemExtractor INSTANCE = new ItemExtractor("default_item_extractor");
 
     protected ItemExtractor(String key) {
         super(key);
+    }
+
+    @Override
+    public ICraftingInventory getTempInventory() {
+        return null;
+    }
+
+    @Override
+    public boolean process(RecipeRunningContext context) {
+        return false;
     }
 
     @Nullable
@@ -30,7 +41,7 @@ public class ItemExtractor extends BaseCraftingExtractor {
             ItemStack result = ItemStack.EMPTY;
             for (int i = 0; i < itemInventory.getSlots(); i++) {
                 ItemStack stack = itemInventory.getSlotContent(i);
-                if (inputStacks.anyMatch(s -> ItemStackUtils.areEqualIgnoreSize(s, stack))) {
+                if (inputStacks.anyMatch(s -> ItemStackUtils.areEqualIgnoreSizeAndDurability(s, stack))) {
                     int toExtract = Math.min(stack.getCount(), (input.getAmount() - extracted));
                     if ((toExtract > 0) && ((result.isEmpty() || ItemHandlerHelper.canItemStacksStack(result, stack)))) {
                         if (result.isEmpty()) {

@@ -5,6 +5,7 @@ import com.mcmoddev.lib.crafting.input.ICraftingInput;
 
 public abstract class BaseCraftingInput extends BaseCraftingObject implements ICraftingInput {
     private final int amount;
+    private String[] inventoryKeys = null;
 
     protected BaseCraftingInput(String key, int amount) {
         super(key);
@@ -14,5 +15,15 @@ public abstract class BaseCraftingInput extends BaseCraftingObject implements IC
     @Override
     public int getAmount() {
         return this.amount;
+    }
+
+    @Override
+    public String[] getInventoryKeys() {
+        return this.inventoryKeys;
+    }
+
+    public BaseCraftingInput setInventoryKeys(String[] inventoryKeys) {
+        this.inventoryKeys = inventoryKeys;
+        return this;
     }
 }

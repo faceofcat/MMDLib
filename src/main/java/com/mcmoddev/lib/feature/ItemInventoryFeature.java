@@ -15,7 +15,6 @@ import com.mcmoddev.lib.container.widget.IWidget;
 import com.mcmoddev.lib.container.widget.ItemStackHandlerWidget;
 import com.mcmoddev.lib.crafting.inventory.ICraftingInventory;
 import com.mcmoddev.lib.crafting.inventory.ICraftingInventoryProvider;
-import com.mcmoddev.lib.crafting.inventory.IItemInventory;
 import com.mcmoddev.lib.crafting.inventory.implementation.ItemHandlerCraftingInventory;
 import com.mcmoddev.lib.inventory.FilteredItemHandler;
 import com.mcmoddev.lib.inventory.ItemHandlerWrapper;
@@ -195,7 +194,7 @@ public class ItemInventoryFeature
 
     @Override
     public List<ICraftingInventory> getInventories() {
-        IItemInventory items = new ItemHandlerCraftingInventory(this.getKey(), this.internalHandler);
+        ICraftingInventory items = new ItemHandlerCraftingInventory(this.getKey(), this.internalHandler);
         return Collections.singletonList(items);
     }
 }

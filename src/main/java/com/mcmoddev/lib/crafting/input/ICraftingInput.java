@@ -6,5 +6,7 @@ import com.mcmoddev.lib.crafting.base.ICraftingObject;
  * Represents an input into a recipe.
  */
 public interface ICraftingInput extends ICraftingObject {
+    String[] getInventoryKeys();
+
     int getAmount();
 }

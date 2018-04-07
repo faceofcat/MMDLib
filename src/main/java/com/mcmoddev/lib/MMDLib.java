@@ -8,6 +8,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -63,6 +64,11 @@ public class MMDLib {
 	static {
 		// Forge says this needs to be statically initialized here.
 		FluidRegistry.enableUniversalBucket();
+	}
+
+	@EventHandler
+	public static void construct(FMLConstructionEvent event) {
+		proxy.construct(event);
 	}
 
 	@EventHandler

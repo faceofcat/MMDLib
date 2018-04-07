@@ -3,7 +3,7 @@ package com.mcmoddev.lib.crafting.input.implementation;
 import net.minecraft.item.Item;
 
 // needed by Face of Cat for Forestry integration of his Powered Thingies' Tree Farm.
-// in one was wondering
+// if one was wondering
 public class ClassNameFilterInput extends BaseItemRegistryFilterInput {
     private final String classNamePattern;
 
