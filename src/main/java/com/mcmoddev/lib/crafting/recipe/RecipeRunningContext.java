@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import com.mcmoddev.lib.crafting.base.ICraftingObject;
 import com.mcmoddev.lib.crafting.inventory.ICraftingInventory;
+import com.mcmoddev.lib.crafting.processor.ICraftingProcessor;
 
 public class RecipeRunningContext {
     private final int totalTicks;

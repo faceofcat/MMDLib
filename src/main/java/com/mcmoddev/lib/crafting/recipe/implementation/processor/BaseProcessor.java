@@ -3,7 +3,7 @@ package com.mcmoddev.lib.crafting.recipe.implementation.processor;
 import java.util.ArrayList;
 import java.util.List;
 import com.mcmoddev.lib.crafting.base.implementation.BaseCraftingObject;
-import com.mcmoddev.lib.crafting.recipe.ICraftingProcessor;
+import com.mcmoddev.lib.crafting.processor.ICraftingProcessor;
 
 public abstract class BaseProcessor extends BaseCraftingObject implements ICraftingProcessor {
     private final List<String> dependencies;
