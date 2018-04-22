@@ -22,6 +22,10 @@ public class ItemHandlerCraftingInventory extends BaseCraftingInventory {
         return this.inventory.getSlots();
     }
 
+    public IItemHandler getItemHandler() {
+        return this.inventory;
+    }
+
     @Override
     public ICraftingIngredient getIngredient(int slot) {
         return new CraftingIngredientItem(this.inventory.getStackInSlot(slot));
