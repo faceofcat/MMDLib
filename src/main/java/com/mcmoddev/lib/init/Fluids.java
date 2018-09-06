@@ -6,19 +6,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.mcmoddev.lib.block.InteractiveFluidBlock;
-import com.mcmoddev.lib.data.MaterialNames;
 import com.mcmoddev.lib.data.SharedStrings;
 import com.mcmoddev.lib.fluids.CustomFluid;
 import com.mcmoddev.lib.material.MMDMaterial;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
@@ -92,24 +86,25 @@ public abstract class Fluids {
 			return null;
 		}
 
-		if (!name.equals(MaterialNames.MERCURY)) {
+		// TODO: make it into a flag/stat or something
+//		if (!name.equals(MaterialNames.MERCURY)) {
 			block = new BlockFluidClassic(material.getFluid(), Material.LAVA);
-		} else {
-			block = new InteractiveFluidBlock(getFluidByName(name), false, (World w, EntityLivingBase e) -> {
-				if (w.rand.nextInt(32) == 0) {
-					e.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 30 * 20, 2));
-				}
-			});
-		}
+//		} else {
+//			block = new InteractiveFluidBlock(getFluidByName(name), false, (World w, EntityLivingBase e) -> {
+//				if (w.rand.nextInt(32) == 0) {
+//					e.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 30 * 20, 2));
+//				}
+//			});
+//		}
 
 		block.setRegistryName(name); // fullName
-		block.setUnlocalizedName(block.getRegistryName().getResourceDomain() + "." + name);
+		block.setTranslationKey(block.getRegistryName().getNamespace() + "." + name);
 		material.addNewBlock("fluid", block);
 		block.setCreativeTab(CreativeTabs.MISC);
 
 		final ItemBlock itemBlock = new ItemBlock(block);
 		itemBlock.setRegistryName(name); // fullName
-		itemBlock.setUnlocalizedName(block.getRegistryName().getResourceDomain() + "." + name);
+		itemBlock.setTranslationKey(block.getRegistryName().getNamespace() + "." + name);
 		material.addNewItem("fluidItemBlock", itemBlock);
 
 		material.setFluidBlock(block);
