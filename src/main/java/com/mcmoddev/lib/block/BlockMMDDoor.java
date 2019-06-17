@@ -2,9 +2,12 @@ package com.mcmoddev.lib.block;
 
 import java.util.Random;
 
+import javax.annotation.Nullable;
+
 import com.mcmoddev.lib.data.Names;
 import com.mcmoddev.lib.material.IMMDObject;
 import com.mcmoddev.lib.material.MMDMaterial;
+import com.mcmoddev.lib.material.MMDMaterialType.MaterialType;
 
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.material.Material;
@@ -20,27 +23,28 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
- * Door Block
+ * Door Block.
  *
  * @author DrCyano
  *
  */
 public class BlockMMDDoor extends net.minecraft.block.BlockDoor implements IMMDObject {
 
-	private final MMDMaterial material;
+	private final MMDMaterial mmdMaterial;
 
 	/**
 	 *
 	 * @param material
 	 *            The material the door is made from
 	 */
-	public BlockMMDDoor(MMDMaterial material) {
+	public BlockMMDDoor(final MMDMaterial material) {
 		super((material.getToolHarvestLevel() > 0) ? material.getVanillaMaterial() : Material.ROCK);
-		this.material = material;
-		this.setSoundType(this.material.getSoundType());
-		this.blockHardness = this.material.getBlockHardness();
-		this.blockResistance = this.material.getBlastResistance();
-		this.setHarvestLevel("pickaxe", this.material.getRequiredHarvestLevel());
+		this.mmdMaterial = material;
+		this.setSoundType(this.mmdMaterial.getSoundType());
+		this.blockHardness = this.mmdMaterial.getBlockHardness();
+		this.blockResistance = this.mmdMaterial.getBlastResistance();
+		this.setHarvestLevel(this.mmdMaterial.getHarvestTool(),
+				this.mmdMaterial.getRequiredHarvestLevel());
 		this.disableStats();
 	}
 
@@ -50,34 +54,61 @@ public class BlockMMDDoor extends net.minecraft.block.BlockDoor implements IMMDO
 	@SideOnly(Side.CLIENT)
 	@Override
 	@Deprecated
-	public ItemStack getItem(final World w, final BlockPos c, final IBlockState bs) {
-		return new ItemStack(this.material.getItem(Names.DOOR));
+	public ItemStack getItem(final World worldIn, final BlockPos pos, final IBlockState state) {
+		return new ItemStack(this.mmdMaterial.getItem(Names.DOOR));
 	}
 
 	@Override
+	@Nullable
 	public Item getItemDropped(final IBlockState state, final Random rand, final int fortune) {
-		return (state.getValue(BlockDoor.HALF) == EnumDoorHalf.UPPER) ? null : this.material.getItem(Names.DOOR);
+		return (state.getValue(BlockDoor.HALF) == EnumDoorHalf.UPPER) ? null
+				: this.mmdMaterial.getItem(Names.DOOR);
 	}
+
 	@Override
-	public boolean onBlockActivated(World world, BlockPos coord, IBlockState blockstate, EntityPlayer player,
-			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		// if Vanilla is anything to go by, since we don't have wood doors at all, this should just return false
-		return false;
-/*		if (this.material.getToolHarvestLevel() > 1)
+	public boolean onBlockActivated(final World worldIn, final BlockPos pos,
+			final IBlockState state, final EntityPlayer playerIn, final EnumHand hand,
+			final EnumFacing facing, final float hitX, final float hitY, final float hitZ) {
+		if ((this.mmdMaterial.getToolHarvestLevel() > 1)
+				|| (this.mmdMaterial.getType().equals(MaterialType.METAL))) {
 			return false;
-		final BlockPos pos = (blockstate.getValue(BlockDoor.HALF) == EnumDoorHalf.LOWER) ? coord : coord.down();
-		final IBlockState bs = coord.equals(pos) ? blockstate : world.getBlockState(pos);
-		if (bs.getBlock() != this)
-			return false;
-		IBlockState newState = bs.cycleProperty(BlockDoor.OPEN);
-		world.setBlockState(pos, newState, 2);
-		world.markBlockRangeForRenderUpdate(pos, coord);
-		world.playEvent(player, ((Boolean) newState.getValue(BlockDoor.OPEN)) ? 1003 : 1006, coord, 0);
-		return true; */
+		} else {
+			final BlockPos blockpos = (state.getValue(BlockDoor.HALF) == EnumDoorHalf.LOWER) ? pos
+					: pos.down();
+			final IBlockState iblockstate = pos.equals(blockpos) ? state
+					: worldIn.getBlockState(blockpos);
+			if (iblockstate.getBlock() != this) {
+				return false;
+			} else {
+				final IBlockState newState = iblockstate.cycleProperty(BlockDoor.OPEN);
+				worldIn.setBlockState(blockpos, newState, 10);
+				worldIn.markBlockRangeForRenderUpdate(blockpos, pos);
+				this.playSound(playerIn, worldIn, blockpos,
+						newState.getValue(BlockDoor.OPEN).booleanValue());
+				return true;
+			}
+		}
 	}
-	
+
+	// Magic Number mappings from net.minecraft.client.renderer.RenderGlobal#playEvent
+	// SoundEvents.BLOCK_IRON_DOOR_OPEN = 1005
+	// SoundEvents.BLOCK_WOODEN_DOOR_OPEN = 1006
+	// SoundEvents.BLOCK_IRON_DOOR_CLOSE = 1011
+	// SoundEvents.BLOCK_WOODEN_DOOR_CLOSE = 1012
+	protected void playSound(@Nullable final EntityPlayer player, final World worldIn,
+			final BlockPos pos, final boolean open) {
+		int retVal;
+		final boolean isMetal = this.getMMDMaterial().getType().equals(MaterialType.METAL);
+		if (open) {
+			retVal = isMetal ? 1005 : 1006;
+		} else {
+			retVal = isMetal ? 1011 : 1012;
+		}
+		worldIn.playEvent(player, retVal, pos, 0);
+	}
+
 	@Override
 	public MMDMaterial getMMDMaterial() {
-		return this.material;
+		return this.mmdMaterial;
 	}
 }

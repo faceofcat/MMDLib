@@ -15,7 +15,6 @@ import mcp.MethodsReturnNonnullByDefault;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-@SuppressWarnings("WeakerAccess")
 public final class LoggingUtil {
     private static final String LOGGING_ID = "__logging_id__";
     private static long currentId = 0;
@@ -43,7 +42,7 @@ public final class LoggingUtil {
             final long id;
             if (compound.hasKey(LOGGING_ID, Constants.NBT.TAG_LONG)) {
                 id = compound.getLong(LOGGING_ID);
-            } else if (!nbt.hasNoTags()) {
+            } else if (!nbt.isEmpty()) {
                 id = LoggingUtil.currentId++;
                 compound.setLong(LOGGING_ID, id);
             } else {

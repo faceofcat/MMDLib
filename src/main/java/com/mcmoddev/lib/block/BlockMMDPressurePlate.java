@@ -8,26 +8,28 @@ import com.mcmoddev.lib.material.MMDMaterial;
  * @author Jasmine Iwanek
  *
  */
-public class BlockMMDPressurePlate extends net.minecraft.block.BlockPressurePlate implements IMMDObject {
+public class BlockMMDPressurePlate extends net.minecraft.block.BlockPressurePlate
+		implements IMMDObject {
 
-	final MMDMaterial material;
+	private final MMDMaterial mmdMaterial;
 
 	/**
 	 *
 	 * @param material
 	 *            The material the pressure plate is made from
 	 */
-	public BlockMMDPressurePlate(MMDMaterial material) {
-		super(material.getVanillaMaterial(), net.minecraft.block.BlockPressurePlate.Sensitivity.MOBS);
-		this.material = material;
-		this.setSoundType(this.material.getSoundType());
-		this.blockHardness = this.material.getBlockHardness();
-		this.blockResistance = this.material.getBlastResistance();
-		this.setHarvestLevel("pickaxe", this.material.getRequiredHarvestLevel());
+	public BlockMMDPressurePlate(final MMDMaterial material) {
+		super(material.getVanillaMaterial(), Sensitivity.MOBS);
+		this.mmdMaterial = material;
+		this.setSoundType(this.mmdMaterial.getSoundType());
+		this.blockHardness = this.mmdMaterial.getBlockHardness();
+		this.blockResistance = this.mmdMaterial.getBlastResistance();
+		this.setHarvestLevel(this.mmdMaterial.getHarvestTool(),
+				this.mmdMaterial.getRequiredHarvestLevel());
 	}
 
 	@Override
 	public MMDMaterial getMMDMaterial() {
-		return this.material;
+		return this.mmdMaterial;
 	}
 }

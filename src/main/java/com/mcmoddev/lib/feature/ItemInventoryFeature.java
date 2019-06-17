@@ -25,7 +25,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue"})
+@SuppressWarnings("unchecked")
 public class ItemInventoryFeature extends BaseFeature implements IClientFeature, IWidgetContainer, ICapabilityProvider {
     private final IItemHandlerModifiable internalHandler;
     private final FilteredItemHandler externalHandler;
@@ -135,7 +135,8 @@ public class ItemInventoryFeature extends BaseFeature implements IClientFeature,
         return this;
     }
 
-    @Override
+    @SuppressWarnings("serial")
+	@Override
     public List<IWidget> getWidgets(final GuiContext context) {
         return new ArrayList<IWidget>() {{
             add(new ItemStackHandlerWidget(

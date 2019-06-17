@@ -2,11 +2,11 @@ package com.mcmoddev.lib.item;
 
 import java.util.List;
 
-import com.mcmoddev.lib.init.Materials;
+import com.mcmoddev.lib.data.Names;
 //import com.mcmoddev.basemetals.items.MMDToolEffects;
+import com.mcmoddev.lib.init.Materials;
 import com.mcmoddev.lib.material.IMMDObject;
 import com.mcmoddev.lib.material.MMDMaterial;
-import com.mcmoddev.lib.util.Oredicts;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -14,31 +14,27 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.oredict.OreDictionary;
 
 /**
- * Shovels
- * 
+ * Shovels.
+ *
  * @author DrCyano
  *
  */
 public class ItemMMDShovel extends net.minecraft.item.ItemSpade implements IMMDObject {
 
 	private final MMDMaterial material;
-	private final String repairOreDictName;
-	private static final long REGEN_INTERVAL = 200;
 
 	/**
 	 *
 	 * @param material
 	 *            The material to make the shovel from
 	 */
-	public ItemMMDShovel(MMDMaterial material) {
+	public ItemMMDShovel(final MMDMaterial material) {
 		super(Materials.getToolMaterialFor(material));
 		this.material = material;
 		this.setMaxDamage(this.material.getToolDurability());
 		this.efficiency = this.material.getToolEfficiency();
-		this.repairOreDictName = Oredicts.INGOT + this.material.getCapitalizedName();
 	}
 
 	@Override
@@ -53,39 +49,39 @@ public class ItemMMDShovel extends net.minecraft.item.ItemSpade implements IMMDO
 
 	@Override
 	public boolean getIsRepairable(final ItemStack intputItem, final ItemStack repairMaterial) {
-		final List<ItemStack> acceptableItems = OreDictionary.getOres(this.repairOreDictName);
-		for (final ItemStack i : acceptableItems)
-			if (ItemStack.areItemsEqual(i, repairMaterial))
-				return true;
-		return false;
+		return MMDItemHelper.isToolRepairable(repairMaterial, this.material.getCapitalizedName());
 	}
 
 	@Override
-	public boolean hitEntity(final ItemStack item, final EntityLivingBase target, final EntityLivingBase attacker) {
+	public boolean hitEntity(final ItemStack item, final EntityLivingBase target,
+			final EntityLivingBase attacker) {
 		super.hitEntity(item, target, attacker);
-		//MMDToolEffects.extraEffectsOnAttack(this.material, item, target, attacker);
+		if(this.getMMDMaterial().hasEffect(item, target)) {
+			this.getMMDMaterial().applyEffect(item, target);
+		}
 		return true;
 	}
 
 	@Override
 	public void onCreated(final ItemStack item, final World world, final EntityPlayer crafter) {
 		super.onCreated(item, world, crafter);
-		//MMDToolEffects.extraEffectsOnCrafting(this.material, item, world, crafter);
-	}
-
-	@Override
-	public void onUpdate(final ItemStack item, final World world, final Entity player, final int inventoryIndex, final boolean isHeld) {
-		if (world.isRemote)
-			return;
-
-		if (this.material.regenerates()  && isHeld && (item.getItemDamage() > 0) && ((world.getTotalWorldTime() % REGEN_INTERVAL) == 0)) {
-			item.setItemDamage(item.getItemDamage() - 1);
+		if(this.getMMDMaterial().hasEffect(item, crafter)) {
+			this.getMMDMaterial().applyEffect(item, crafter);
 		}
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-		//MMDToolEffects.addToolSpecialPropertiesToolTip(this.material, tooltip);
+	public void onUpdate(final ItemStack item, final World world, final Entity player,
+			final int inventoryIndex, final boolean isHeld) {
+		MMDItemHelper.doRegeneration(item, world, isHeld, this.material.regenerates());
+	}
+
+	@Override
+	public void addInformation(final ItemStack stack, final World worldIn,
+			final List<String> tooltip, final ITooltipFlag flagIn) {
+		List<String> tt = this.getMMDMaterial().getTooltipFor(Names.SHOVEL);
+		if(!tt.isEmpty())
+			tooltip.addAll(tt);
 	}
 
 	@Override

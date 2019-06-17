@@ -14,7 +14,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
 
-@SuppressWarnings("WeakerAccess")
 public class SidedFeatureWrapper implements IFeature, IClientFeature, IServerFeature, ISidedFeature, ICapabilityProvider {
     private EnumFacing[] facings = null;
     private boolean dirty = false;
@@ -205,7 +204,7 @@ public class SidedFeatureWrapper implements IFeature, IClientFeature, IServerFea
         if (nbt.hasKey("facings", Constants.NBT.TAG_INT_ARRAY)) {
             this.facings = Arrays
                 .stream(nbt.getIntArray("facings"))
-                .mapToObj(EnumFacing::getFront)
+                .mapToObj(EnumFacing::byIndex)
                 .toArray(EnumFacing[]::new);
         }
         else {

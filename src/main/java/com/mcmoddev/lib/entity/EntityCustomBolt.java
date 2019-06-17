@@ -1,7 +1,7 @@
 package com.mcmoddev.lib.entity;
 
 import com.mcmoddev.lib.data.Names;
-import com.mcmoddev.lib.init.Materials;
+import com.mcmoddev.lib.data.MaterialNames;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityTippedArrow;
@@ -23,8 +23,9 @@ public class EntityCustomBolt extends EntityTippedArrow {
 	 * @param worldIn
 	 *            The World
 	 */
-	public EntityCustomBolt(World worldIn) {
+	public EntityCustomBolt(final World worldIn) {
 		super(worldIn);
+		this.itemStack = ItemStack.EMPTY;
 	}
 
 	/**
@@ -38,8 +39,9 @@ public class EntityCustomBolt extends EntityTippedArrow {
 	 * @param z
 	 *            Z
 	 */
-	public EntityCustomBolt(World worldIn, double x, double y, double z) {
+	public EntityCustomBolt(final World worldIn, final double x, final double y, final double z) {
 		super(worldIn, x, y, z);
+		this.itemStack = ItemStack.EMPTY;
 	}
 
 	/**
@@ -51,7 +53,8 @@ public class EntityCustomBolt extends EntityTippedArrow {
 	 * @param shooter
 	 *            The Shooter
 	 */
-	public EntityCustomBolt(World worldIn, ItemStack stack, EntityPlayer shooter) {
+	public EntityCustomBolt(final World worldIn, final ItemStack stack,
+			final EntityPlayer shooter) {
 		super(worldIn, shooter);
 		this.itemStack = stack;
 	}
@@ -62,30 +65,38 @@ public class EntityCustomBolt extends EntityTippedArrow {
 	}
 
 	protected ItemStack getBoltStack() {
-		if (this.itemStack == null) {
+		if (this.itemStack.isEmpty()) {
 			// FIXME - this is potentially unreliable
-			this.itemStack = new ItemStack(Materials.getMaterialByName("wood").getItem(Names.BOLT));
+			this.itemStack = new ItemStack(com.mcmoddev.lib.init.Materials
+					.getMaterialByName(MaterialNames.WOOD).getItem(Names.BOLT));
 		}
 
 		return new ItemStack(this.itemStack.getItem(), 1, this.itemStack.getItemDamage());
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		super.writeToNBT(compound);
-
-		final NBTTagCompound itemStackCompound = new NBTTagCompound();
-		this.itemStack.writeToNBT(itemStackCompound);
-
-		compound.setTag("itemstack", itemStackCompound);
-
-		return compound;
+	public int hashCode() {
+		return super.hashCode() ^ this.getArrowStack().hashCode();
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound compound) {
+	public boolean equals(final Object other) {
+		if (!(other instanceof EntityCustomBolt)) {
+			return false;
+		}
+		return super.equals(other);
+	}
+
+	@Override
+	public NBTTagCompound writeToNBT(final NBTTagCompound compound) {
+		super.writeToNBT(compound);
+		return EntityHelpers.writeToNBTItemStack(compound, this.itemStack);
+	}
+
+	@Override
+	public void readFromNBT(final NBTTagCompound compound) {
 		super.readFromNBT(compound);
 
-		this.itemStack = new ItemStack(compound.getCompoundTag("itemstack"));
+		this.itemStack = EntityHelpers.readFromNBTItemStack(compound);
 	}
 }

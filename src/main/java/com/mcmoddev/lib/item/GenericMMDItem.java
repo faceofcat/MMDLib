@@ -3,19 +3,21 @@ package com.mcmoddev.lib.item;
 import javax.annotation.Nonnull;
 
 import com.mcmoddev.lib.material.IMMDObject;
+import com.mcmoddev.lib.material.IMMDBurnableObject;
 import com.mcmoddev.lib.material.MMDMaterial;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Item;
 
 /**
- * version of Item that stores a material
- * 
+ * version of Item that stores a material.
+ *
  * @author DrCyano
  *
  */
-public class GenericMMDItem extends net.minecraft.item.Item implements IMMDObject {
-	private int burnTime = 0;
+public class GenericMMDItem extends Item implements IMMDObject, IMMDBurnableObject {
 
+	private int burnTime = 0;
 	private final MMDMaterial material;
 
 	/**
@@ -23,7 +25,7 @@ public class GenericMMDItem extends net.minecraft.item.Item implements IMMDObjec
 	 * @param material
 	 *            The material to make the item from
 	 */
-	public GenericMMDItem(MMDMaterial material) {
+	public GenericMMDItem(final MMDMaterial material) {
 		this.material = material;
 	}
 
@@ -31,19 +33,24 @@ public class GenericMMDItem extends net.minecraft.item.Item implements IMMDObjec
 	public MMDMaterial getMMDMaterial() {
 		return this.material;
 	}
-	
-	
-	public void setBurnTime(int timeInTicks) {
+
+	@Override
+	public void setBurnTime(final int timeInTicks) {
 		this.burnTime = timeInTicks;
 	}
-	
+
 	@Override
-	public int getItemBurnTime(@Nonnull ItemStack itemStack) {
-		if( itemStack.getItem().equals(this) ) {
+	public int getItemBurnTime(@Nonnull final ItemStack itemStack) {
+		if (itemStack.getItem().equals(this)) {
 			return this.burnTime;
 		} else {
 			return itemStack.getItem().getItemBurnTime(itemStack);
 		}
 	}
 
+/*	@Override
+	public float getSmeltingExperience(ItemStack itemStack) {
+		// clamp to the valid range
+		return Math.min(1.0f, Math.max(material.getOreSmeltXP(), 0.0f));
+	}*/
 }

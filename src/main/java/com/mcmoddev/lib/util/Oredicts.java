@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+
+import javax.annotation.Nullable;
+
+import com.mcmoddev.lib.data.SharedStrings;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -13,10 +16,11 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class Oredicts {
-	private static Map<String, List<Item>> oreDictItemMap = new HashMap<>();
-	private static Map<String, List<Block>> oreDictBlockMap = new HashMap<>();
-	private static Map<String, List<ItemStack>> oreDictItemStackMap = new HashMap<>();
-	
+
+	private static final Map<String, List<Item>> oreDictItemMap = new HashMap<>();
+	private static final Map<String, List<Block>> oreDictBlockMap = new HashMap<>();
+	private static final Map<String, List<ItemStack>> oreDictItemStackMap = new HashMap<>();
+
 	// See net.minecraftforge.oredict.OreDictionary.initVanillaEntries() for Vanilla oreDict names
 
 	// tree- and wood-related things
@@ -242,37 +246,51 @@ public class Oredicts {
 	public static final String NUGGET_CHARCOAL = "nuggetCharcoal";
 	public static final String NUGGET_COAL = "nuggetCoal";
 
-	public static void registerOre(String name, Block block) {
+	/**
+	 *
+	 * @param name The name to register the Block against.
+	 * @param block The Block to register.
+	 */
+	public static void registerOre(final String name, @Nullable final Block block) {
 		if (block != null) {
-			if( oreDictBlockMap.containsKey(name) ) {
+			if (oreDictBlockMap.containsKey(name)) {
 				oreDictBlockMap.get(name).add(block);
 			} else {
-				List<Block> nl = new ArrayList<>();
+				final List<Block> nl = new ArrayList<>();
 				nl.add(block);
 				oreDictBlockMap.put(name, nl);
 			}
 		}
 	}
 
-	public static void registerOre(String name, Item item) {
+	/**
+	 *
+	 * @param name The name to register the Item against.
+	 * @param item the Item to register.
+	 */
+	public static void registerOre(final String name, @Nullable final Item item) {
 		if (item != null) {
-			if( oreDictItemMap.containsKey(name) ) {
+			if (oreDictItemMap.containsKey(name)) {
 				oreDictItemMap.get(name).add(item);
 			} else {
-				List<Item> nl = new ArrayList<>();
+				final List<Item> nl = new ArrayList<>();
 				nl.add(item);
 				oreDictItemMap.put(name, nl);
 			}
 		}
-
 	}
 
-	public static void registerOre(String name, ItemStack itemStack) {
-		if (itemStack != null) {
-			if( oreDictItemStackMap.containsKey(name) ) {
+	/**
+	 *
+	 * @param name The name to register the ItemStack against.
+	 * @param itemStack the ItemStack to register.
+	 */
+	public static void registerOre(final String name, final ItemStack itemStack) {
+		if (!itemStack.isEmpty()) {
+			if (oreDictItemStackMap.containsKey(name)) {
 				oreDictItemStackMap.get(name).add(itemStack);
 			} else {
-				List<ItemStack> nl = new ArrayList<>();
+				final List<ItemStack> nl = new ArrayList<>();
 				nl.add(itemStack);
 				oreDictItemStackMap.put(name, nl);
 			}
@@ -280,34 +298,41 @@ public class Oredicts {
 
 	}
 
+	/**
+	 *
+	 */
 	public static void registerItemOreDictionaryEntries() {
-		for( Entry<String,List<Item>> ent : oreDictItemMap.entrySet() ) {
-			for( Item i : ent.getValue() ) {
-				if( i.getRegistryName().getResourceDomain().equals(Loader.instance().activeModContainer().getModId())) {
-					OreDictionary.registerOre(ent.getKey(), i);
-				}
-			}
-		}
-		for( Entry<String,List<ItemStack>> ent : oreDictItemStackMap.entrySet() ) {
-			for( ItemStack is : ent.getValue() ) {
-				if( is.getItem().getRegistryName().getResourceDomain().equals(Loader.instance().activeModContainer().getModId())) {
-					OreDictionary.registerOre(ent.getKey(), is);
-				}
-			}
-		}		
+		oreDictItemMap.entrySet().stream()
+		.forEach(ent -> {
+			ent.getValue().stream()
+			.filter(i -> Loader.instance().activeModContainer().getModId().equalsIgnoreCase(i.getRegistryName().getNamespace()))
+			.filter(i -> i != null)
+			.forEach(i -> OreDictionary.registerOre(ent.getKey(), i));
+		});
+		
+		oreDictItemStackMap.entrySet().stream()
+		.forEach(ent -> {
+			ent.getValue().stream()
+			.filter(is -> Loader.instance().activeModContainer().getModId().equalsIgnoreCase(is.getItem().getRegistryName().getNamespace()))
+			.filter(is -> is.getItem() != net.minecraft.init.Items.AIR && is.getItem() != null)
+			.forEach(is -> OreDictionary.registerOre(ent.getKey(), is));
+		});
 	}
-	
+
+	/**
+	 *
+	 */
 	public static void registerBlockOreDictionaryEntries() {
-		for( Entry<String,List<Block>> ent : oreDictBlockMap.entrySet() ) {
-			for( Block b : ent.getValue() ) {
-				if( b.getRegistryName().getResourceDomain().equals(Loader.instance().activeModContainer().getModId())) {
-					OreDictionary.registerOre(ent.getKey(), b);
-				}
-			}
-		}
+		oreDictBlockMap.entrySet().stream()
+		.forEach(ent -> {
+			ent.getValue().stream()
+			.filter(bl -> Loader.instance().activeModContainer().getModId().equalsIgnoreCase(bl.getRegistryName().getNamespace()))
+			.filter(bl -> bl != null)
+			.forEach(bl -> OreDictionary.registerOre(ent.getKey(), bl));
+		});
 	}
-	
+
 	private Oredicts() {
-		throw new IllegalAccessError("Not a instantiable class");
+		throw new IllegalAccessError(SharedStrings.NOT_INSTANTIABLE);
 	}
 }

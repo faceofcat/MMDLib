@@ -7,19 +7,24 @@ import net.minecraft.block.BlockPlanks;
 
 public class BlockMMDFenceGate extends net.minecraft.block.BlockFenceGate implements IMMDObject {
 
-	final MMDMaterial material;
+	private final MMDMaterial mmdMaterial;
 
-	public BlockMMDFenceGate(MMDMaterial material) {
+	/**
+	 *
+	 * @param material The material the Fence Gate is made from
+	 */
+	public BlockMMDFenceGate(final MMDMaterial material) {
 		super(BlockPlanks.EnumType.OAK);
-		this.material = material;
-		this.setSoundType(this.material.getSoundType());
-		this.blockHardness = this.material.getBlockHardness();
-		this.blockResistance = this.material.getBlastResistance();
-		this.setHarvestLevel("axe", this.material.getRequiredHarvestLevel());
+		this.mmdMaterial = material;
+		this.setSoundType(this.mmdMaterial.getSoundType());
+		this.blockHardness = this.mmdMaterial.getBlockHardness();
+		this.blockResistance = this.mmdMaterial.getBlastResistance();
+		this.setHarvestLevel(this.mmdMaterial.getHarvestTool(),
+				this.mmdMaterial.getRequiredHarvestLevel());
 	}
 
 	@Override
 	public MMDMaterial getMMDMaterial() {
-		return this.material;
+		return this.mmdMaterial;
 	}
 }

@@ -7,23 +7,28 @@ import net.minecraft.block.state.IBlockState;
 
 public class BlockMMDBookshelf extends net.minecraft.block.BlockBookshelf implements IMMDObject {
 
-	final MMDMaterial material;
+	private final MMDMaterial mmdMaterial;
 
-	public BlockMMDBookshelf(MMDMaterial material) {
-		this.material = material;
-		this.setSoundType(this.material.getSoundType());
-		this.blockHardness = this.material.getBlockHardness();
-		this.blockResistance = this.material.getBlastResistance();
-		this.setHarvestLevel("axe", this.material.getRequiredHarvestLevel());
+	/**
+	 *
+	 * @param material The material the Bookshelf is made from
+	 */
+	public BlockMMDBookshelf(final MMDMaterial material) {
+		this.mmdMaterial = material;
+		this.setSoundType(this.mmdMaterial.getSoundType());
+		this.blockHardness = this.mmdMaterial.getBlockHardness();
+		this.blockResistance = this.mmdMaterial.getBlastResistance();
+		this.setHarvestLevel(this.mmdMaterial.getHarvestTool(),
+				this.mmdMaterial.getRequiredHarvestLevel());
 	}
 
-	public void setFullBlock(boolean val) {
+	public void setFullBlock(final boolean val) {
 		this.fullBlock = val;
 	}
 
 	@Override
 	public MMDMaterial getMMDMaterial() {
-		return this.material;
+		return this.mmdMaterial;
 	}
 
 	/**
@@ -31,7 +36,7 @@ public class BlockMMDBookshelf extends net.minecraft.block.BlockBookshelf implem
 	 */
 	@Override
 	@Deprecated
-	public boolean isFullCube(IBlockState state) {
+	public boolean isFullCube(final IBlockState state) {
 		return this.fullBlock;
 	}
 
@@ -40,7 +45,7 @@ public class BlockMMDBookshelf extends net.minecraft.block.BlockBookshelf implem
 	 */
 	@Override
 	@Deprecated
-	public boolean isOpaqueCube(IBlockState state) {
+	public boolean isOpaqueCube(final IBlockState state) {
 		return this.fullBlock;
 	}
 

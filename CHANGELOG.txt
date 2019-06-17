@@ -1,0 +1,2 @@
+1) (@dshadowwolf) Various bugfixes
+2) (@dshadowwolf) Undo move of vanilla extensions - this lib should provide some base definitions, but no items or blocks on its own
